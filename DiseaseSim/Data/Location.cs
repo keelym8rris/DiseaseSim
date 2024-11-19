@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Project3DiseaseSpreadSimulation.Data
+namespace DiseaseSim.Data
 {
     public class Location
     {
-        public string Id { get; set; }
+        public string Id { get; private set; }
         public ICollection<Person> People { get; private set; }
         public ICollection<Location> Neighbors { get; private set; }
 
@@ -19,25 +19,24 @@ namespace Project3DiseaseSpreadSimulation.Data
             Neighbors = new List<Location>();
         }
 
-        public void AddPerson(Person person) => People.Add(person);
-
-        public void RemovePerson(Person person) => People.Remove(person);
-
-        public void SpreadDisease(double infectionChance)
+        public void SimulateDiseaseSpread(double infectionChance)
         {
-            var infectedPeople = People.Where(p => p.IsInfected && !p.IsDead && !p.IsQuarantined).ToList();
-            var susceptiblePeople = People.Where(p => !p.IsInfected && !p.IsDead).ToList();
-
-            Random rand = new Random();
-            foreach (var infected in infectedPeople)
+            foreach (var person in People)
             {
-                foreach (var susceptible in susceptiblePeople)
+                person.TrySpreadInfection(this, infectionChance);
+            }
+        }
+
+        public void HandleTravel(int currentHour, Random random)
+        {
+            var travelers = People.Where(p => p.CanTravel(currentHour)).ToList();
+            foreach (var traveler in travelers)
+            {
+                if (Neighbors.Count > 0)
                 {
-                    if (rand.NextDouble() <= infectionChance)
-                    {
-                        susceptible.Infect();
-                        infected.InfectionSpreadCount++;
-                    }
+                    var targetLocation = Neighbors.ElementAt(random.Next(Neighbors.Count));
+                    targetLocation.People.Add(traveler);
+                    People.Remove(traveler);
                 }
             }
         }

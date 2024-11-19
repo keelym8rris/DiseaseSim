@@ -4,26 +4,32 @@
              x:Class="DiseaseSim.MainPage">
 
     <ScrollView>
-        <VerticalStackLayout
-        Padding="30,0"
-        Spacing="25">
 
-            <VerticalStackLayout Padding="20" Spacing="15">
+        <VerticalStackLayout Padding="20" Spacing="15">
 
-                <Label x:Name="GameMessage" 
-           Text="Select a configuration file to start the simulation." 
-           FontSize="18" 
-           TextColor="Black" />
+                <StackLayout Padding="20" Spacing="10">
+                    <Label Text="Disease Spread Simulation" 
+               FontSize="24" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Start" />
 
-                <Button Text="Select Configuration File"
-            x:Name="LoadConfigButton"
-            Clicked="LoadConfigButton_Clicked" />
+                <Button Text="Load File and Start Simulation" 
+                FontSize="18" 
+                Clicked="OnLoadFileButtonClicked" />
 
-                <Button Text="Start Simulation"
-            x:Name="StartButton"
-            IsVisible="False"
-            Clicked="StartButton_Clicked" />
+                <Label x:Name="HourLabel" Text="Current Hour: 0" />
+                <Label x:Name="AliveCountLabel" Text="Alive Count: 0" />
+                <Label x:Name="DeadCountLabel" Text="Dead Count: 0" />
+                <Label x:Name="InfectedCountLabel" Text="Infected Count: 0" />
+                <Label x:Name="QuarantinedCountLabel" Text="Quarantined Count: 0" />
+                <Label x:Name="TopInfectedLabel" Text="Top Infected Person: N/A" />
+                <Label x:Name="TopSpreaderLabel" Text="Top Spreader Person: N/A" /> 
+
+                <Button Text="Click to Progress to the Next Hour" 
+                    FontSize="18" 
+                    Clicked="OnSimulationTick" />
+                    
+            </StackLayout>
             </VerticalStackLayout>
-        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
