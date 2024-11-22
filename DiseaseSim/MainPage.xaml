@@ -4,32 +4,55 @@
              x:Class="DiseaseSim.MainPage">
 
     <ScrollView>
-
         <VerticalStackLayout Padding="20" Spacing="15">
 
-                <StackLayout Padding="20" Spacing="10">
-                    <Label Text="Disease Spread Simulation" 
-               FontSize="24" 
-               HorizontalOptions="Center" 
-               VerticalOptions="Start" />
+            <StackLayout Padding="20" Spacing="10">
+                <Label Text="Disease Spread Simulation" 
+                       FontSize="24" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Start" />
 
                 <Button Text="Load File and Start Simulation" 
-                FontSize="18" 
-                Clicked="OnLoadFileButtonClicked" />
+                        FontSize="18" 
+                        Clicked="OnLoadFileButtonClicked" />
 
-                <Label x:Name="HourLabel" Text="Current Hour: 0" />
-                <Label x:Name="AliveCountLabel" Text="Alive Count: 0" />
-                <Label x:Name="DeadCountLabel" Text="Dead Count: 0" />
-                <Label x:Name="InfectedCountLabel" Text="Infected Count: 0" />
-                <Label x:Name="QuarantinedCountLabel" Text="Quarantined Count: 0" />
-                <Label x:Name="TopInfectedLabel" Text="Top Infected Person: N/A" />
-                <Label x:Name="TopSpreaderLabel" Text="Top Spreader Person: N/A" /> 
+                <!-- Display Simulation Parameters -->
+                <Label 
+                    Text="Simulation Parameters" 
+                    FontSize="18" />
 
-                <Button Text="Click to Progress to the Next Hour" 
-                    FontSize="18" 
-                    Clicked="OnSimulationTick" />
-                    
+                <Label x:Name="InfectionChance" Text="Infection Chance: " />
+                <Label x:Name="DeathChance" Text="Death Chance: " />
+                <Label x:Name="DiseaseDuration" Text="Disease Duration: " />
+                <Label x:Name="QuarantineDuration" Text="Quarantine Duration: " />
+                <Label x:Name="TravelChance" Text="Travel Chance: " />
+                <Label x:Name="MeanPopulation" Text="Mean Population: " />
+                <Label x:Name="StdDevPopulation" Text="Population Std Dev: " />
+                <Label x:Name="MeanQuarantineChance" Text="Mean Quarantine Chance: " />
+                <Label x:Name="StdDevQuarantineChance" Text="Quarantine Std Dev: " />
+
+                <!-- Display Locations -->
+                <Label Text="Locations" FontSize="18" />
+                <Label x:Name="LocationsLabel" Text="Locations will appear here." />
+
+                <Button Text="See what an hour does..." 
+                        FontSize="18" 
+                        Clicked="OnHourChange" />
+
+
+                <Label x:Name="Hour" Text="Current Hour:" FontSize="18" IsVisible="False" />
+                <Label x:Name="TotalInfectedCount"  Text="Total Infected Count:" FontSize="18"  IsVisible="False" />
+                <Label x:Name="DeadCount"  Text="Dead Count:" FontSize="18" IsVisible="False" />
+                <Label x:Name="AliveCount" Text="Alive Count:" FontSize="18" IsVisible="False" />
+                <Label x:Name="TotalInfectedPercentage"  Text="Total Infected Percentage:" FontSize="18"  IsVisible="False" />
+                <Label x:Name="TotalDeadPercentage"  Text="Total Dead Percentage:" FontSize="18"  IsVisible="False" />
+                <Label x:Name="AverageInfectedPercentage"  Text="Percentage of people infection on average:" FontSize="18"  IsVisible="False" />
+                <Label x:Name="QuarantinedCount"  Text="Quarantined Count:" FontSize="18" IsVisible="False" />
+                <Label x:Name="AverageInfected" Text="Average Person Spread Disease This Many Times:" FontSize="18" IsVisible="False" />
+                <Label x:Name="TopSpreader" Text="Max Number of People Somebody Spread Disease To:" FontSize="18" IsVisible="False" />
+
             </StackLayout>
-            </VerticalStackLayout>
+        </VerticalStackLayout>
     </ScrollView>
+
 </ContentPage>
