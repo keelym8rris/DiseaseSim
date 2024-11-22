@@ -13,7 +13,7 @@
         public double QuarantineChance { get;  set; }
         public int HoursInQuarantine { get; set; }
 
-        private Random _random;
+        private Random randy;
 
         public Person(string id, int travelStartTime, int travelEndTime, double quarantineChance)
         {
@@ -28,7 +28,7 @@
             IsQuarantined = false;
             HoursInQuarantine = 0;
 
-            _random = new Random();
+            randy = new Random();
         }
 
         public bool CanTravel(int currentHour)
@@ -46,7 +46,7 @@
 
             foreach (var person in location.People)
             {
-                if (!person.IsInfected && !person.IsDead && !person.IsQuarantined && _random.NextDouble() < infectionChance)
+                if (!person.IsInfected && !person.IsDead && !person.IsQuarantined && randy.NextDouble() < infectionChance)
                 {
                     person.IsInfected = true;
                     InfectionSpreadCount++;

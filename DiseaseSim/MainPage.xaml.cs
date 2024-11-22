@@ -172,7 +172,6 @@ namespace DiseaseSim
         /// <param name="e"></param>
         private void OnHourChange(object sender, EventArgs e)
         {
-            UpdateStatistics();
             // Increment the hour and perform simulation logic (as implemented earlier)
             currentHour++;
 
@@ -182,8 +181,8 @@ namespace DiseaseSim
 
             foreach (var location in allLocations)
             {
-                location.SimulateDiseaseSpread(infectionChance);
-                location.HandleTravel(currentHour, randy);
+                location.SimulateDiseaseSpread(infectionChance / 100); 
+                location.HandleTravel(currentHour, randy); 
 
                 foreach (var person in location.People)
                 {
@@ -220,6 +219,9 @@ namespace DiseaseSim
                 DisplaySimulationEndStats();
                 return;
             }
+
+            UpdateStatistics();
+
         }
 
         /// <summary>
@@ -285,7 +287,7 @@ namespace DiseaseSim
             foreach (var location in allLocations)
             {
                 // Randomly infect some individuals in each location
-                int initialInfected = Math.Max(1, location.People.Count / infectionChance); // 10% initially infected
+                int initialInfected = Math.Max(1, (infectionChance / 100) * location.People.Count);
                 var infectedPeople = location.People.OrderBy(_ => randy.Next()).Take(initialInfected);
 
                 foreach (var person in infectedPeople)
