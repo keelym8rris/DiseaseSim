@@ -22,6 +22,8 @@ namespace DiseaseSim
         private List<Location> allLocations;
         private Random randy;
 
+        private string csvFilePath; 
+
         public MainPage()
         {
             InitializeComponent();
@@ -30,6 +32,10 @@ namespace DiseaseSim
             currentHour = 0;
             totalInfected = 0;
             totalDeaths = 0;
+
+            // Initialize the CSV file for hourly data
+            csvFilePath = Path.Combine(FileSystem.AppDataDirectory, "DiseaseSimulationLog.csv");
+            File.WriteAllText(csvFilePath, "Hour,Alive,Dead,Infected,Quarantined,MostInfectedPerson,TopSpreader\n");
         }
 
         private async void OnLoadFileButtonClicked(object sender, EventArgs e)
@@ -51,7 +57,8 @@ namespace DiseaseSim
             catch (Exception ex)
             {
                 await DisplayAlert("Error", $"Failed to load file: {ex.Message}", "OK");
-            }
+            } 
+
         }
 
         private void LoadConfiguration(string filePath)
@@ -151,23 +158,11 @@ namespace DiseaseSim
                 $"{location.Id}: Population {location.People.Count}");
 
             LocationsLabel.Text = "Locations:\n" + string.Join("\n", locationDetails);
+
+            HideButtonName.IsVisible = true;
         }
 
-        /// <summary>
-        /// get locations created and to be diseased 
-        /// </summary>
-        private void InitializeLocations()
-        {
-            // Connect neighbors for travel simulation
-            foreach (var location in allLocations)
-            {
-                foreach (var neighbor in allLocations.Where(l => l != location))
-                {
-                    location.Neighbors.Add(neighbor);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// each hour this needs to update all of the numbers and make more people die from the disease 
         /// also call all the functions that change numbers 
@@ -219,7 +214,27 @@ namespace DiseaseSim
             totalInfected += newlyInfected;
             totalDeaths += newlyDead;
 
-            // add stuff where if everyone is dead then the simulation ends 
+            // simulation ends if nothing more meaningful is going to happen 
+            if (IsSimulationOver())
+            {
+                DisplaySimulationEndStats();
+                return;
+            }
+        }
+
+        /// <summary>
+        /// get locations created and to be diseased 
+        /// </summary>
+        private void InitializeLocations()
+        {
+            // Connect neighbors for travel simulation
+            foreach (var location in allLocations)
+            {
+                foreach (var neighbor in allLocations.Where(l => l != location))
+                {
+                    location.Neighbors.Add(neighbor);
+                }
+            }
         }
 
         private void UpdateStatistics()
@@ -281,25 +296,6 @@ namespace DiseaseSim
             }
         }
 
-        /*/// <summary>
-        /// handles spread of the disease 
-        /// </summary>
-        public void SimulateInfectionSpread()
-        {
-            foreach (var location in allLocations)
-            {
-                foreach (var person in location.People)
-                {
-                    // Check if the person can travel and spread infection
-                    if (person.CanTravel(currentHour))
-                    {
-                        person.TrySpreadInfection(location, infectionChance);
-                    }
-                }
-            }
-
-        }*/
-
 
         private void SetLabelsVisibility(bool isVisible)
         {
@@ -313,6 +309,33 @@ namespace DiseaseSim
             QuarantinedCount.IsVisible = isVisible;
             AverageInfected.IsVisible = isVisible;
             TopSpreader.IsVisible = isVisible;
+        }
+
+        private async void HideButton(object sender, EventArgs e)
+        {
+            SetLabelsInvisibility(false);
+        }
+
+        private void SetLabelsInvisibility(bool isVisible)
+        {
+            InfectionChance.IsVisible = isVisible;
+            DeathChance.IsVisible = isVisible;
+            DiseaseDuration.IsVisible = isVisible;
+            QuarantineDuration.IsVisible = isVisible;
+            TravelChance.IsVisible = isVisible;
+            MeanPopulation.IsVisible = isVisible;
+            StdDevPopulation.IsVisible = isVisible;
+            MeanQuarantineChance.IsVisible = isVisible;
+            StdDevQuarantineChance.IsVisible = isVisible;
+        }
+
+        private bool IsSimulationOver()
+        {
+            int totalPopulation = allLocations.Sum(loc => loc.People.Count);
+            int totalInfected = allLocations.Sum(loc => loc.People.Count(p => p.IsInfected));
+            int totalAlive = allLocations.Sum(loc => loc.People.Count(p => !p.IsDead));
+
+            return totalInfected == 0 || totalAlive == 0; // No infected or no living people
         }
 
         private void DisplaySimulationEndStats()

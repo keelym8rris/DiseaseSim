@@ -1,55 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DiseaseSim.MainPage">
+             x:Class="DiseaseSim.MainPage"
+             BackgroundColor="#121212">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
             <StackLayout Padding="20" Spacing="10">
-                <Label Text="Disease Spread Simulation" 
-                       FontSize="24" 
-                       HorizontalOptions="Center" 
-                       VerticalOptions="Start" />
+                <Label Text="Disease Spread Simulation"
+                       FontSize="28"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Start"
+                       FontAttributes="Bold"
+                       TextColor="#00FF00" />
 
-                <Button Text="Load File and Start Simulation" 
-                        FontSize="18" 
+                <Button Text="Load File and Start Simulation"
+                        FontSize="18"
+                        BackgroundColor="#006400"
+                        TextColor="White"
+                        CornerRadius="8"
                         Clicked="OnLoadFileButtonClicked" />
 
                 <!-- Display Simulation Parameters -->
-                <Label 
-                    Text="Simulation Parameters" 
-                    FontSize="18" />
+                <Label Text="Simulation Parameters"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="#00FF00" />
 
-                <Label x:Name="InfectionChance" Text="Infection Chance: " />
-                <Label x:Name="DeathChance" Text="Death Chance: " />
-                <Label x:Name="DiseaseDuration" Text="Disease Duration: " />
-                <Label x:Name="QuarantineDuration" Text="Quarantine Duration: " />
-                <Label x:Name="TravelChance" Text="Travel Chance: " />
-                <Label x:Name="MeanPopulation" Text="Mean Population: " />
-                <Label x:Name="StdDevPopulation" Text="Population Std Dev: " />
-                <Label x:Name="MeanQuarantineChance" Text="Mean Quarantine Chance: " />
-                <Label x:Name="StdDevQuarantineChance" Text="Quarantine Std Dev: " />
+                <Label x:Name="InfectionChance" Text="Infection Chance: " TextColor="#FFFFFF" />
+                <Label x:Name="DeathChance" Text="Death Chance: " TextColor="#FFFFFF" />
+                <Label x:Name="DiseaseDuration" Text="Disease Duration: " TextColor="#FFFFFF" />
+                <Label x:Name="QuarantineDuration" Text="Quarantine Duration: " TextColor="#FFFFFF" />
+                <Label x:Name="TravelChance" Text="Travel Chance: " TextColor="#FFFFFF" />
+                <Label x:Name="MeanPopulation" Text="Mean Population: " TextColor="#FFFFFF" />
+                <Label x:Name="StdDevPopulation" Text="Population Std Dev: " TextColor="#FFFFFF" />
+                <Label x:Name="MeanQuarantineChance" Text="Mean Quarantine Chance: " TextColor="#FFFFFF" />
+                <Label x:Name="StdDevQuarantineChance" Text="Quarantine Std Dev: " TextColor="#FFFFFF" />
+
+
+                <Button x:Name="HideButtonName"
+                        Text="Hide Simulation Parameters"
+                        FontSize="18"
+                        BackgroundColor="#333333"
+                        TextColor="#00FF00"
+                        CornerRadius="8"
+                        IsVisible="False"
+                        Clicked="HideButton" /> 
 
                 <!-- Display Locations -->
-                <Label Text="Locations" FontSize="18" />
-                <Label x:Name="LocationsLabel" Text="Locations will appear here." />
+                <Label Text="Locations"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="#FF0000" />
+                <Label x:Name="LocationsLabel" Text="Locations will appear here." TextColor="#FFFFFF" />
 
-                <Button Text="See what an hour does..." 
-                        FontSize="18" 
-                        Clicked="OnHourChange" />
+                <Button Text="See what an hour does..."
+                    FontSize="18"
+                    BackgroundColor="#98FB98"
+                    TextColor="Black"
+                    CornerRadius="8"
+                    Clicked="OnHourChange" />
 
+                    <Label x:Name="Hour" Text="Current Hour:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
+                    <Label x:Name="TotalInfectedCount" Text="Total Infected Count:" FontSize="18" IsVisible="False" TextColor="#FF0000" />
+                    <Label x:Name="DeadCount" Text="Dead Count:" FontSize="18" IsVisible="False" TextColor="#FF0000" />
+                    <Label x:Name="AliveCount" Text="Alive Count:" FontSize="18" IsVisible="False" TextColor="#00FF00" />
+                    <Label x:Name="TotalInfectedPercentage" Text="Total Infected Percentage:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
+                    <Label x:Name="TotalDeadPercentage" Text="Total Dead Percentage:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
+                    <Label x:Name="AverageInfectedPercentage" Text="Average Person Infection Rate:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
+                    <Label x:Name="QuarantinedCount" Text="Quarantined Count:" FontSize="18" IsVisible="False" TextColor="#00FFFF" />
+                    <Label x:Name="AverageInfected" Text="Avg. Spread Per Person:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
+                    <Label x:Name="TopSpreader" Text="Max Spread by a Person:" FontSize="18" IsVisible="False" TextColor="#FF00FF" />
 
-                <Label x:Name="Hour" Text="Current Hour:" FontSize="18" IsVisible="False" />
-                <Label x:Name="TotalInfectedCount"  Text="Total Infected Count:" FontSize="18"  IsVisible="False" />
-                <Label x:Name="DeadCount"  Text="Dead Count:" FontSize="18" IsVisible="False" />
-                <Label x:Name="AliveCount" Text="Alive Count:" FontSize="18" IsVisible="False" />
-                <Label x:Name="TotalInfectedPercentage"  Text="Total Infected Percentage:" FontSize="18"  IsVisible="False" />
-                <Label x:Name="TotalDeadPercentage"  Text="Total Dead Percentage:" FontSize="18"  IsVisible="False" />
-                <Label x:Name="AverageInfectedPercentage"  Text="Percentage of people infection on average:" FontSize="18"  IsVisible="False" />
-                <Label x:Name="QuarantinedCount"  Text="Quarantined Count:" FontSize="18" IsVisible="False" />
-                <Label x:Name="AverageInfected" Text="Average Person Spread Disease This Many Times:" FontSize="18" IsVisible="False" />
-                <Label x:Name="TopSpreader" Text="Max Number of People Somebody Spread Disease To:" FontSize="18" IsVisible="False" />
 
             </StackLayout>
         </VerticalStackLayout>

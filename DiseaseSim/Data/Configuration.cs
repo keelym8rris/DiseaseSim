@@ -15,6 +15,15 @@ public class Configuration
     public int SimulationDuration { get; private set; }
     public double TravelChance { get; private set; }
 
+    /// <summary>
+    /// I don't actually use this, I have all of the configuring I need in MainPage.xaml.cs 
+    /// If I have time after I get everything working I'll try to get it implemented in here
+    /// and just use it in mainpage but thats gonna take some time that i need to use 
+    /// on more essential stuff rn :) hopefully i can come back though 
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <exception cref="FileNotFoundException"></exception>
+    /// <exception cref="FormatException"></exception>
     public void LoadConfiguration(string filePath)
     {
         if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
