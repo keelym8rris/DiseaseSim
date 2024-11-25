@@ -38,6 +38,11 @@ namespace DiseaseSim
             File.WriteAllText(csvFilePath, "Hour,Alive,Dead,Infected,Quarantined,MostInfectedPerson,TopSpreader\n");
         }
 
+        /// <summary>
+        /// Loads the files with all the info in to start the simulation 
+        /// </summary>
+        /// <param name="sender">button stuff</param>
+        /// <param name="e">button stuff</param>
         private async void OnLoadFileButtonClicked(object sender, EventArgs e)
         {
             try
@@ -61,6 +66,14 @@ namespace DiseaseSim
 
         }
 
+        /// <summary>
+        /// reads and parses a config file 
+        /// Creates all the things that will be needed for the simulation 
+        /// Initializes all variables with # so that we can do math with them 
+        /// </summary>
+        /// <param name="filePath">the path thats from the filepicker above</param>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="FormatException"></exception>
         private void LoadConfiguration(string filePath)
         {
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
@@ -162,16 +175,35 @@ namespace DiseaseSim
             HideButtonName.IsVisible = true;
         }
 
-        
+
         /// <summary>
-        /// each hour this needs to update all of the numbers and make more people die from the disease 
-        /// also call all the functions that change numbers 
+        /// creates a network of locations with populations, each having attributes 
+        /// like travel windows and quarantine likelihood 
+        /// </summary>
+        private void InitializeLocations()
+        {
+            // Connect neighbors for travel simulation
+            foreach (var location in allLocations)
+            {
+                foreach (var neighbor in allLocations.Where(l => l != location))
+                {
+                    location.Neighbors.Add(neighbor);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// each hour this needs to updates statistics and make more people die from the disease 
+        /// Uses a random number generator based on 
         /// ALSO needs to add stuff to csv file each hour 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnHourChange(object sender, EventArgs e)
         {
+            UpdateStatistics();
+
             // Increment the hour and perform simulation logic (as implemented earlier)
             currentHour++;
 
@@ -179,9 +211,10 @@ namespace DiseaseSim
             int newlyInfected = 0;
             int newlyDead = 0;
 
+            
             foreach (var location in allLocations)
             {
-                location.SimulateDiseaseSpread(infectionChance / 100); 
+                location.SimulateDiseaseSpread(infectionChance); 
                 location.HandleTravel(currentHour, randy); 
 
                 foreach (var person in location.People)
@@ -193,16 +226,28 @@ namespace DiseaseSim
                             person.IsDead = true;
                             newlyDead++;
                         }
+                        //sees if a sick person needs to be quarantined 
                         else if (!person.IsQuarantined && randy.NextDouble() < person.QuarantineChance)
                         {
                             person.IsQuarantined = true;
+                            person.HoursInQuarantine = 0; 
                         }
+                        
                         else
                         {
                             person.InfectionCount--;
                             if (person.InfectionCount <= 0)
                                 person.IsInfected = false;
                         }
+                    }
+
+                    if (person.IsQuarantined)
+                    {
+                        person.HoursInQuarantine++;
+                        if (person.HoursInQuarantine == quarantineDuration)
+                        {
+                            person.IsQuarantined = false;             
+                        } 
                     }
 
                     if (person.IsInfected && !person.IsDead)
@@ -220,23 +265,6 @@ namespace DiseaseSim
                 return;
             }
 
-            UpdateStatistics();
-
-        }
-
-        /// <summary>
-        /// get locations created and to be diseased 
-        /// </summary>
-        private void InitializeLocations()
-        {
-            // Connect neighbors for travel simulation
-            foreach (var location in allLocations)
-            {
-                foreach (var neighbor in allLocations.Where(l => l != location))
-                {
-                    location.Neighbors.Add(neighbor);
-                }
-            }
         }
 
         private void UpdateStatistics()
@@ -244,8 +272,8 @@ namespace DiseaseSim
             // Total population across all locations
             int totalPopulation = allLocations.Sum(loc => loc.People.Count);
             int totalAlive = allLocations.Sum(loc => loc.People.Count(p => !p.IsDead));
-            int totalDead = totalDeaths;
-            int totalInfected = allLocations.Sum(loc => loc.People.Count(p => p.IsInfected));
+            
+            //int totalInfected = allLocations.Sum(loc => loc.People.Count(p => p.IsInfected || p.IsQuarantined));
             int totalQuarantined = allLocations.Sum(loc => loc.People.Count(p => p.IsQuarantined));
 
             // Mean and Standard Deviation for Population
@@ -254,8 +282,8 @@ namespace DiseaseSim
                 allLocations.Sum(loc => Math.Pow(loc.People.Count - meanPopulation, 2)) / allLocations.Count);
 
             // Percentages
-            double infectedPercentage = (double)totalInfected / totalPopulation * 100;
-            double deadPercentage = (double)totalDead / totalPopulation * 100;
+            double infectedPercentage = (((double)totalInfected + (double)totalDeaths) / totalPopulation) * 100;
+            double deadPercentage = ((double)totalDeaths / totalPopulation) * 100;
             double averageInfectedPercentage = allLocations.Average(loc =>
                 (double)loc.People.Count(p => p.IsInfected) / loc.People.Count * 100);
 
@@ -268,7 +296,7 @@ namespace DiseaseSim
             // Update Labels
             Hour.Text = $"Current Hour: {currentHour}";
             AliveCount.Text = $"Alive Count: {totalAlive}";
-            DeadCount.Text = $"Dead Count: {totalDead}";
+            DeadCount.Text = $"Dead Count: {totalDeaths}";
             TotalInfectedCount.Text = $"Total Infected Count: {totalInfected}";
             TotalInfectedPercentage.Text = $"Total Infected Percentage: {infectedPercentage:F2}%";
             TotalDeadPercentage.Text = $"Total Dead Percentage: {deadPercentage:F2}%";

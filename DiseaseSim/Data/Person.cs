@@ -13,6 +13,8 @@
         public double QuarantineChance { get;  set; }
         public int HoursInQuarantine { get; set; }
 
+        public int HoursRemainingInQuarantine { get; set; }
+
         private Random randy;
 
         public Person(string id, int travelStartTime, int travelEndTime, double quarantineChance)
@@ -46,7 +48,7 @@
 
             foreach (var person in location.People)
             {
-                if (!person.IsInfected && !person.IsDead && !person.IsQuarantined && randy.NextDouble() < infectionChance)
+                if (!person.IsInfected && !person.IsDead && !person.IsQuarantined && randy.NextDouble() < (infectionChance / 100))
                 {
                     person.IsInfected = true;
                     InfectionSpreadCount++;
