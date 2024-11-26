@@ -6,8 +6,9 @@
         public int TravelStartTime { get;  set; }
         public int TravelEndTime { get;  set; }
         public bool IsInfected { get; set; }
-        public int InfectionCount { get;  set; }
+        public int InfectionHoursLeft { get;  set; }
         public int InfectionSpreadCount { get;  set; }
+        public int InfectionsReceived { get; set; }
         public bool IsDead { get;  set; }
         public bool IsQuarantined { get; set; }
         public double QuarantineChance { get;  set; }
@@ -24,7 +25,7 @@
             TravelEndTime = travelEndTime;
             QuarantineChance = Math.Clamp(quarantineChance, 0.0, 1.0);
             IsInfected = false;
-            InfectionCount = 0;
+            InfectionHoursLeft = 0;
             InfectionSpreadCount = 0;
             IsDead = false;
             IsQuarantined = false;
@@ -40,21 +41,6 @@
             // - Person is not quarantined
             // - The current hour is within their travel window
             return !IsDead && !IsQuarantined && currentHour >= TravelStartTime && currentHour < TravelEndTime;
-        }
-
-        public void TrySpreadInfection(Location location, double infectionChance)
-        {
-            if (!IsInfected || IsDead || IsQuarantined) return;
-
-            foreach (var person in location.People)
-            {
-                if (!person.IsInfected && !person.IsDead && !person.IsQuarantined && randy.NextDouble() < (infectionChance / 100))
-                {
-                    person.IsInfected = true;
-                    InfectionSpreadCount++;
-                    person.InfectionCount++;
-                }
-            }
         }
     }
 }

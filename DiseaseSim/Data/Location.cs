@@ -19,14 +19,6 @@ namespace DiseaseSim.Data
             Neighbors = new List<Location>();
         }
 
-        public void SimulateDiseaseSpread(double infectionChance)
-        {
-            foreach (var person in People)
-            {
-                person.TrySpreadInfection(this, infectionChance);
-            }
-        }
-
         public void HandleTravel(int currentHour, Random random)
         {
             var travelers = People.Where(p => p.CanTravel(currentHour)).ToList();
@@ -40,5 +32,6 @@ namespace DiseaseSim.Data
                 }
             }
         }
+
     }
 }

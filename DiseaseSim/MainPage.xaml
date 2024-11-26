@@ -21,6 +21,9 @@
                         TextColor="White"
                         CornerRadius="8"
                         Clicked="OnLoadFileButtonClicked" />
+                
+                
+
 
                 <!-- Display Simulation Parameters -->
                 <Label Text="Simulation Parameters"
@@ -46,7 +49,16 @@
                         TextColor="#00FF00"
                         CornerRadius="8"
                         IsVisible="False"
-                        Clicked="HideButton" /> 
+                        Clicked="HideButton" />
+
+                <Button x:Name="ShowButtonName"
+                        Text="Show Simulation Parameters"
+                        FontSize="18"
+                        BackgroundColor="#333333"
+                        TextColor="#00FF00"
+                        CornerRadius="8"
+                        IsVisible="False"
+                        Clicked="ShowButton" />
 
                 <!-- Display Locations -->
                 <Label Text="Locations"
@@ -72,6 +84,11 @@
                     <Label x:Name="QuarantinedCount" Text="Quarantined Count:" FontSize="18" IsVisible="False" TextColor="#00FFFF" />
                     <Label x:Name="AverageInfected" Text="Avg. Spread Per Person:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
                     <Label x:Name="TopSpreader" Text="Max Spread by a Person:" FontSize="18" IsVisible="False" TextColor="#FF00FF" />
+
+                    <Label x:Name="CSVLabel" Text="Data was saved to:" FontSize="15" IsVisible="False" TextColor="Lavender" />
+
+
+
 
 
             </StackLayout>
