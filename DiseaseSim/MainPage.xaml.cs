@@ -88,6 +88,9 @@ namespace DiseaseSim
                 await DisplayAlert("Error", $"Failed to load file: {ex.Message}", "OK");
             }
 
+            HourChangeButton.IsVisible = true;
+            GoButtonName.IsVisible = true; 
+
         }
 
         /// <summary>
@@ -271,7 +274,6 @@ namespace DiseaseSim
                         {
                             person.IsQuarantined = false;
                             person.IsInfected = false; // Ensure they're no longer infected
-                            person.IsDead = false; 
                         }
                     }
                 }
@@ -426,6 +428,7 @@ namespace DiseaseSim
                 foreach (Person person in infectedPeople)
                 {
                     person.IsInfected = true;
+                    person.IsDead = false; 
                 }
             }
         }
@@ -444,8 +447,6 @@ namespace DiseaseSim
             TopSpreader.IsVisible = isVisible;
             CSVLabel.IsVisible = isVisible;
         }
-
-
 
         private async void HideButton(object sender, EventArgs e)
         {
@@ -487,6 +488,7 @@ namespace DiseaseSim
 
         private void DisplaySimulationEndStats()
         {
+            
             var totalPopulation = allLocations.Sum(loc => loc.People.Count);
             var percentageInfected = totalInfected * 100.0 / totalPopulation;
             var percentageDead = totalDeaths * 100.0 / totalPopulation;
@@ -495,12 +497,24 @@ namespace DiseaseSim
             DisplayAlert("Simulation Complete",
                 $"Simulation Ended!\n" +
                 $"Duration: {currentHour} hours\n" +
-                $"Total Infected: {totalInfected}\n" +
+                $"Total Infected Alive Individuals: {totalInfected}\n" +
                 $"Total Dead: {totalDeaths}\n" +
                 $"% Infected: {percentageInfected:F2}%\n" +
-                $"% Dead: {percentageDead:F2}%\n" +
-                $"Average % Infected per Location: {averageInfectedPerLocation:F2}%",
+                $"% Dead: {percentageDead:F2}%\n",
+                //$"Average % Infected per Location: {averageInfectedPerLocation:F2}%",
                 "OK");
+        }
+
+        private async void GoButton(object sender, EventArgs e)
+        {
+            // Run the simulation until it ends
+            while (!IsSimulationOver())
+            {
+                OnHourChange(sender, e); 
+                await Task.Delay(100);  // small delay to visually see the progress
+            }
+
+            DisplaySimulationEndStats(); 
         }
 
 

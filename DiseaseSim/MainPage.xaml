@@ -69,12 +69,23 @@
 
                 <Button Text="See what an hour does..."
                     FontSize="18"
+                        x:Name="HourChangeButton"
                     BackgroundColor="#98FB98"
                     TextColor="Black"
+                    IsVisible="False"
                     CornerRadius="8"
                     Clicked="OnHourChange" />
 
-                    <Label x:Name="Hour" Text="Current Hour:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
+                <Button Text="Run Entire Simulation"
+                        x:Name="GoButtonName"
+                    FontSize="18"
+                    IsVisible="False"
+                    BackgroundColor="Gray"
+                    TextColor="#98FB98"
+                    CornerRadius="8"
+                    Clicked="GoButton" />
+
+                <Label x:Name="Hour" Text="Current Hour:" FontSize="18" IsVisible="False" TextColor="#FFFFFF" />
                     <Label x:Name="TotalInfectedCount" Text="Total Infected Count:" FontSize="18" IsVisible="False" TextColor="#FF0000" />
                     <Label x:Name="DeadCount" Text="Dead Count:" FontSize="18" IsVisible="False" TextColor="#FF0000" />
                     <Label x:Name="AliveCount" Text="Alive Count:" FontSize="18" IsVisible="False" TextColor="#00FF00" />
