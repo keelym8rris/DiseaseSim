@@ -540,7 +540,7 @@ namespace DiseaseSim
                 $"Duration: {currentHour} hours\n" +
                 $"Total Infected Alive Individuals: {totalInfected}\n" +
                 $"Total Dead: {totalDeaths}\n" +
-                $"% Infected: {percentageInfected:F2}%\n" +
+                $"% Infected Right Now: {percentageInfected:F2}%\n" +
                 $"% Dead: {percentageDead:F2}%\n",
                 //$"Average % Infected per Location: {averageInfectedPerLocation:F2}%",
                 "OK");
