@@ -5,6 +5,7 @@ namespace DiseaseSim
 {
     public partial class MainPage : ContentPage
     {
+        //needed info for calculations and stats, read in from a file later
         private int currentHour;
         private int infectionChanceInt;
         private double infectionChance;
@@ -17,16 +18,25 @@ namespace DiseaseSim
         private double meanQuarantineChance;
         private double stdDevQuarantineChance;
 
-
+        //totals 
         private int totalInfected;
         private int totalDeaths;
 
+        //lists of all locations to iterate through later to infect people 
         private List<Location> allLocations;
+
+        //used to calculate if people are dead, infected, etc 
         private Random randy;
 
+        //the filepath declared in MainPage()
         private string csvFilePath;
 
-
+        /// <summary>
+        /// gets main page front end stuff ready to go and sets a file path 
+        /// for the info to be saved to (the csv file) 
+        /// also initializes some variables that will be used to track 
+        /// person info later, the hours, and the disease spread 
+        /// </summary>
         public MainPage()
         {
             InitializeComponent();
@@ -40,30 +50,10 @@ namespace DiseaseSim
             // Set the full CSV file path
             csvFilePath = @"C:\Users\keely\OneDrive\Github\DiseaseSim\CSV\CSVLogFile.csv";
 
-            try
-            {
-                // Ensure the directory exists before creating the file
-                string directoryPath = Path.GetDirectoryName(csvFilePath);
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                // Create the file with headers if it doesn't exist
-                if (!File.Exists(csvFilePath))
-                {
-                    File.WriteAllText(csvFilePath, "Timestamp,Message\n");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle any errors (e.g., permissions issues, invalid path)
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
         }
 
         /// <summary>
-        /// Loads the files with all the info in to start the simulation 
+        /// Loads the files with all the info and parameters to start the simulation
         /// </summary>
         /// <param name="sender">button stuff</param>
         /// <param name="e">button stuff</param>
@@ -209,7 +199,7 @@ namespace DiseaseSim
         /// </summary>
         private void InitializeLocations()
         {
-            // Connect neighbors for travel simulation
+            // Connect neighbors for travel 
             foreach (var location in allLocations)
             {
                 foreach (var neighbor in allLocations.Where(l => l != location))
@@ -220,9 +210,9 @@ namespace DiseaseSim
         }
 
         /// <summary>
-        /// each hour this needs to updates statistics and make more people die from the disease 
-        /// Uses a random number generator based on 
-        /// ALSO needs to add stuff to csv file each hour 
+        /// each hour this updates statistics and make more people die from the disease 
+        /// it also adds people to quarantine or takes them out of quarantine
+        /// ALSO logs all info to the csv file each "hour"
         /// </summary>
         /// <param name="sender">button stuff</param>
         /// <param name="e">button stuff</param>
@@ -296,6 +286,11 @@ namespace DiseaseSim
             LogSimulationData(csvFilePath);
         }
 
+        /// <summary>
+        /// This simulates the spread of the disease by iterating through each 
+        /// location and then each person in each location 
+        /// </summary>
+        /// <param name="infectionChance">percent chance that somebody will become infected(from initial file)</param>
         public void SpreadDisease(double infectionChance)
         {
             foreach (var location in allLocations)
@@ -317,6 +312,11 @@ namespace DiseaseSim
             }
         }
 
+        /// <summary>
+        /// Does a LOT of math to determine all of the necessary calculations 
+        /// about the disease and the percentages and updates the labels
+        /// on the MainPage.xaml 
+        /// </summary>
         private void UpdateStatistics()
         {
             // Total population across all locations
@@ -359,6 +359,11 @@ namespace DiseaseSim
             SetLabelsVisibility(true);
         }
 
+        /// <summary>
+        /// This is what actually logs all of the statistics also calculated above
+        /// to the csv file that 
+        /// </summary>
+        /// <param name="filePath">csv filepath</param>
         private void LogSimulationData(string filePath)
         {
             // Total population across all locations
@@ -416,7 +421,11 @@ namespace DiseaseSim
         }
 
 
-        //we need some initial infected people so that it actually spreads 
+        /// <summary>
+        /// we need some initial infected people so that it actually spreads
+        /// This is what chooses some patient 0's that the disease starts from
+        /// depending on the infection chance percentage that is determined from the file 
+        /// </summary>
         private void InitializeInfected()
         {
             foreach (var location in allLocations)
@@ -433,6 +442,11 @@ namespace DiseaseSim
             }
         }
 
+        /// <summary>
+        /// This was quality of life stuff that I added to make stuff
+        /// that is not important not appear on the screen if we don't need it yet
+        /// </summary>
+        /// <param name="isVisible">whether I want it to show or not</param>
         private void SetLabelsVisibility(bool isVisible)
         {
             Hour.IsVisible = isVisible;
@@ -448,6 +462,11 @@ namespace DiseaseSim
             CSVLabel.IsVisible = isVisible;
         }
 
+        /// <summary>
+        /// Button that collapses the simulation parameters if the user wants 
+        /// </summary>
+        /// <param name="sender">button stuff</param>
+        /// <param name="e">button stuff</param>
         private async void HideButton(object sender, EventArgs e)
         {
             SetParametersVisibility(false);
@@ -455,6 +474,11 @@ namespace DiseaseSim
             ShowButtonName.IsVisible = true; 
         }
 
+        /// <summary>
+        /// More quality of life stuff that makes things not visible if 
+        /// we don't need them to be 
+        /// </summary>
+        /// <param name="isVisible">true makes them visible, false hides them</param>
         private void SetParametersVisibility(bool isVisible)
         {
             InfectionChance.IsVisible = isVisible;
@@ -470,6 +494,12 @@ namespace DiseaseSim
             CSVLabel.IsVisible = isVisible;
         }
 
+        /// <summary>
+        /// just reshows the parameters if they want them back after clicking 
+        /// the hide button 
+        /// </summary>
+        /// <param name="sender">button</param>
+        /// <param name="e">button</param>
         private async void ShowButton(object sender, EventArgs e)
         {
             SetParametersVisibility(true);
@@ -477,6 +507,12 @@ namespace DiseaseSim
             HideButtonName.IsVisible = true;
         }
 
+        /// <summary>
+        /// Checks to see if the simulation should end
+        /// It ends if there are no more infected people and if there are 
+        /// no more alive people 
+        /// </summary>
+        /// <returns>True if simulation is over, false if simualtion is still going </returns>
         private bool IsSimulationOver()
         {
             int totalPopulation = allLocations.Sum(loc => loc.People.Count);
@@ -486,6 +522,11 @@ namespace DiseaseSim
             return totalInfected == 0 || totalAlive == 0; // No infected or no living people
         }
 
+        /// <summary>
+        /// Displays some statistics after the simulation has ended 
+        /// to show the user the amount of people left alive and all
+        /// the stats that were collected over time 
+        /// </summary>
         private void DisplaySimulationEndStats()
         {
             
@@ -505,6 +546,16 @@ namespace DiseaseSim
                 "OK");
         }
 
+        /// <summary>
+        /// JUST FOR YOU GILLENWATER!!! :)
+        /// Runs the ENTIRE simulation for all you people that don't want 
+        /// to click a button 80 million times 
+        /// 
+        /// Still shows it all nice and pretty by delaying the screen changes 
+        /// so you can watch the numbers change 
+        /// </summary>
+        /// <param name="sender">button stuff</param>
+        /// <param name="e">button stuff</param>
         private async void GoButton(object sender, EventArgs e)
         {
             // Run the simulation until it ends
@@ -516,7 +567,5 @@ namespace DiseaseSim
 
             DisplaySimulationEndStats(); 
         }
-
-
     }
 }
